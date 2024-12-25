@@ -21,4 +21,13 @@ export class SubCategory implements ISubCategory{
         this.filmIds = [...this.filmIds]
     }
 
+    static areEqual (prev: SubCategory, current: SubCategory){
+        const sameId = prev.id === current.id
+        const sameName = prev.name === current.name;
+        const sameFilms = prev.filmIds.sort.toString() === current.filmIds.sort.toString();
+        return sameId && sameName && sameFilms
+    }
+
+
+
 }

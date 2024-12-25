@@ -1,4 +1,5 @@
 import {ICategory, ISubCategory} from "./types.ts";
+import {SubCategory} from "./SubCategory.ts";
 
 export class Category implements ICategory{
     name: string;
@@ -21,6 +22,22 @@ export class Category implements ICategory{
         const deleteIndex = this.subCategories.findIndex(item => item.id === subCategoryId);
         if (deleteIndex < 0) throw new  Error(`SubCategory with id: ${subCategoryId} does not exist`)
         this.subCategories = [...this.subCategories.splice(deleteIndex, 1)]
+    }
+
+    areEqual (prev: Category, current: Category){
+        const sameId = prev.id === current.id
+        const sameName = prev.name === current.name;
+
+        const sameSubs = prev.subCategories.reduce((acc, prevSubCat) => {
+            current.subCategories.forEach(curSubCat => {
+                if (SubCategory.areEqual(prevSubCat, curSubCat)) return true
+            })
+
+            return acc
+        }, false)
+
+
+        return sameId && sameName && sameSubs
     }
 
 }

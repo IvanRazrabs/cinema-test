@@ -13,12 +13,12 @@ type NewCategory = Omit<ICategory, "id">
 
 type DeletedEntity = Omit<IEntity, "name">
 
-type UpdatedCategories = IEntity & {updatedSubCategories: ISubCategory[], deleteSubCategories: DeletedEntity}
+type UpdatedCategory = IEntity & {updatedSubCategories: ISubCategory[], deleteSubCategories: DeletedEntity}
 
 
 interface SaveCategoryResponse {
     newCategories: NewCategory[]
-    updatedCategories: UpdatedCategories[]
+    updatedCategories: UpdatedCategory[]
     deletedCategories: DeletedEntity[]
 }
 
@@ -49,8 +49,30 @@ export class CategoryApi {
 
         }, [] as DeletedEntity[])
 
-        // Измененные
-        const updatedCategories: UpdatedCategories[] = []
+        //
+        const updatedCategories: UpdatedCategory[] = []
+        // дефолтные - удаленные
+        defaultCategories.forEach(defCat => {
+
+            const {id, name, subCategories} = defCat
+
+            currentCategories.forEach(curCat => {
+                const {id: curId, name: curName, subCategories: curSubCategories} = curCat
+                //забираем только те у которых одинаковые id
+                if (id === curId) {
+                    const sameName = name === curName
+
+
+                }
+
+
+
+
+
+
+            })
+
+        })
 
 
 
