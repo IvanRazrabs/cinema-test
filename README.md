@@ -1,50 +1,193 @@
-# React + TypeScript + Vite
+# Тестовое задание frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Вы делаете админ панель для управления витриной кинотеатра. 
+В ней есть возможность создавать категории и подкатегории фильмов. 
+Каждому фильму может быть присвоено несколько подкатегорий.
 
-Currently, two official plugins are available:
+Необходимо реализовать
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- страницу отображающую список категорий, их подкатегорий и названий фильмов находящихся в подкатегории.
+- форму редактирования категории/добавления новой категории. На ней есть возможность
+    - добавить новую подкатегорию
+    - удалить существующую подкатегорию
+    - редактирование списка фильмов подкатегории с возможностью добавить новый фильм из списка доступных или удалить фильм из подкатегории
 
-## Expanding the ESLint configuration
+Не требуется реальная отправка на сервер, достаточно вывести итоговую структуру в консоль. Для этого добавить кнопку “Сохранить” по нажатии на которую в консоль браузера выводится 3и группы категорий
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- категории которые были созданы. нужно вывести список объектов категорий с подкатегориями и id фильмов из подкатегорий
+- категории ранее существовавшие на сервере, но измененные в ходе редактирования
+- категории удаленные
 
-- Configure the top-level `parserOptions` property like this:
+Если подкатегория была удалена, то она выводится в поле updatedCategories.deletedSubCategory.
+
+Если категория была удалена и не имела id, то она никуда не выводится.
+
+Пример вывода
 
 ```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
+{
+    newCategories: [
+		{
+			name: "",
+			subCategories: [
+				{
+					name: "",
+					filmIds: []
+				}
+			]
+		},
+		{...}
+	],
+	updatedCategories: [
+		{
+			id: "",
+			name: "",
+			updatedSubCategories: [],
+			deletedSubCategories: []
+		},
+		{...}
+	],
+	deletedCategories: [
+		{
+			id: ""
+		},
+		{...}
+	]
+	}
+```
+
+# Структура сущностей
+
+- фильм
+    - id в базе данных
+    - название
+- категория
+    - id в базе данных. Новые категории не имеют id (или id = null) до сохранения на сервере
+    - название
+    - массив подкатегорий
+        - id в базе данных. Новые подкатегории не имеют id (или id = null) до сохранения на сервере
+        - название
+        - массив id фильмов отнесенных в эту подкатегорию
+
+# Исходный набор данных для отображения после загрузки страницы
+
+```js
+{
+  "films": [
+    {
+      "id": 1,
+      "name": "The Matrix"
     },
-  },
-})
+    {
+      "id": 2,
+      "name": "Inception"
+    },
+    {
+      "id": 3,
+      "name": "Interstellar"
+    },
+    {
+      "id": 4,
+      "name": "The Dark Knight"
+    },
+    {
+      "id": 5,
+      "name": "Pulp Fiction"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Action",
+      "subCategories": [
+        {
+          "id": 101,
+          "name": "Sci-Fi",
+          "filmIds": [1, 2, 3]
+        },
+        {
+          "id": 102,
+          "name": "Superheroes",
+          "filmIds": [1, 2, 4]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Drama",
+      "subCategories": [
+        {
+          "id": 201,
+          "name": "Historical",
+          "filmIds": [1, 3, 5]
+        },
+        {
+          "id": 202,
+          "name": "Romance",
+          "filmIds": [2, 3, 5]
+        }
+      ]
+    }
+  ]
+}
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+# Пример отображения данных на странице
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+[Добавить категорию]
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+Категория 1 (редактировать)
+
+Подкатегория 11
+
+фильм 1
+
+фильм 2
+
+Подкатегория 12
+
+фильм 3
+
+Подкатегория 13
+
+---
+
+Категория 2 (редактировать)
+
+Подкатегория 21
+
+фильм 4
+
+Подкатегория 22
+
+---
+
+# Пример форму создания/редактирования категории
+
+Инпут с именем категории
+
+Инпут с именем подкатегории 1
+
+фильм 1 (удалить)
+
+фильм 2 (удалить)
+
+[Добавить фильм]
+
+Инпут с именем подкатегории 2
+
+фильм 3 (удалить)
+
+фильм 4 (удалить)
+
+[Добавить фильм]
+
+[Добавить подкатегорию]
+
+# Требования к тех стеку
+
+React 18
+
+Без использования внешних библиотек управления состоянием. только то, что есть в react
+
+UI фреймворк: Mui 6 https://github.com/mui/material-ui будет плюсом, но можно использовать любой фреймворк
