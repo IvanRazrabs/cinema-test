@@ -28,6 +28,24 @@ export class SubCategory implements ISubCategory{
         return sameId && sameName && sameFilms
     }
 
+    get isNew(){
+        return !!this.id
+    }
 
+    isExist(baseSubcategories: SubCategory[]){
+        return baseSubcategories.some(item => item.id === this.id)
+    }
+
+    static isUpdated (baseSubcategory: SubCategory, currentSubcategory: SubCategory) {
+        const {id: baseId, name: baseName, filmIds: baseFilmIds} = baseSubcategory
+        const {id, name, filmIds} = currentSubcategory
+
+        if (id !== baseId) return false;
+
+        const isSameName = name === baseName
+        const isSameFilms = filmIds.sort().toString() === baseFilmIds.sort().toString()
+
+        return !isSameName || !isSameFilms
+    }
 
 }
