@@ -1,14 +1,17 @@
 import {ISubCategory} from "./types.ts";
+import { v4 as uuidv4 } from 'uuid';
 
 export class SubCategory implements ISubCategory{
     id?: number;
     name: string;
     filmIds: number[];
+    fakeId: string
 
     constructor(name: string, filmIds?: number[], id?: number) {
         this.id = id;
         this.name = name;
         this.filmIds = filmIds ? filmIds : [];
+        this.fakeId = uuidv4()
     }
 
     removeFilm(id: number) {

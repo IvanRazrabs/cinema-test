@@ -1,16 +1,30 @@
 import {ICategory} from "./types.ts";
 import {SubCategory} from "./SubCategory.ts";
 import {DeletedEntity, UpdatedCategory} from "../API/CategoryApi.ts";
+import { v4 as uuidv4 } from 'uuid';
 
 export class Category implements ICategory{
     name: string;
     subCategories: SubCategory[];
     id?: number
+    fakeId: string
 
     constructor(name: string, subCategories?: SubCategory[], id?: number) {
         this.name = name;
         this.subCategories = subCategories ? subCategories : []
         this.id = id;
+        this.fakeId = uuidv4()
+    }
+
+    get films() {
+        let result = new Set<number>()
+        for (const sub of this.subCategories) {
+            for (const id of sub.filmIds) {
+                result.add(id)
+            }
+        }
+
+        return [...result]
     }
 
     static getNew (curCats: ICategory[]){
